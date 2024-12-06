@@ -27,7 +27,8 @@ def series_roi_means(series: list[sitk.Image],
 def lazy_series_roi_means(series_path: str,
                           roi_path: str,
                           resample: Optional[str] = ...,
-                          labels: Optional[dict[str, str]] = ...)\
+                          labels: Optional[dict[str, str]] = ...,
+                          frame_dur: bool = ...)\
         -> dict[Union[str, int], list[float]]: ...
 
 # From model.py

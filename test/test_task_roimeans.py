@@ -122,6 +122,17 @@ class TestTaskROIMeans(unittest.TestCase):
         self.assertAlmostEqual(r1[3], 13473.5, places=1)
         self.assertAlmostEqual(r2[3], 17120.9, places=1)
 
+    def test_task_frame_dur(self):
+        f = open(os.path.join(
+            'test', 'xml_input', 'test_roi_means_frame_dur.xml'))
+        tree = xmltodict.parse(f.read(), xml_attribs=True)
+        task = tree['colibri']['task']
+        colibri.task_roi_means(task)
+        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        frame_dur = dyn['frame_dur']
+        self.assertEqual(frame_dur,
+                         [3.04, 3.26, 3.26, 3.26, 3.25, 3.26, 3.25, 3.26, 3.26])
+
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'out.txt')):
             os.remove(os.path.join('test', 'out.txt'))

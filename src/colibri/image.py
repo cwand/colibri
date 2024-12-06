@@ -103,7 +103,8 @@ def series_roi_means(series: list[sitk.Image],
 def lazy_series_roi_means(series_path: str,
                           roi_path: str,
                           resample: Optional[str] = None,
-                          labels: Optional[dict[str, str]] = None)\
+                          labels: Optional[dict[str, str]] = None,
+                          frame_dur: bool = False)\
         -> dict[str, list[float]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
     context means that the images are loaded one at a time and the mean values
@@ -119,7 +120,8 @@ def lazy_series_roi_means(series_path: str,
     The function returns a dictionary object. They keys in the object are
     'tacq' which stores a list of acquisition times (relative to the first
     image) and the labels of the ROI (integers) (see the keyword argument
-    'labels' for options).
+    'labels' for options). Other keys are also available, see argument list
+    below.
 
     Arguments:
     series_path --  The path to the images series dicom files
@@ -133,6 +135,10 @@ def lazy_series_roi_means(series_path: str,
                     for example the ROI label value '1' should be replaced with
                     'left' and the value '2' should be replaced with 'right'
                     use the argument labels={'1': 'left', '2': 'right'}.
+    frame_dur   --  If True, the output dictionary will contain the frame
+                    duration as well as its acquisition time. The frame duration
+                    will be stored under the key 'frame_dur' and output in
+                    seconds. Default is false.
 
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
@@ -190,5 +196,9 @@ def lazy_series_roi_means(series_path: str,
             # Append the mean value to the list for each label.
             res[labels.get(str(label), str(label))].append(
                 label_stats_filter.GetMean(label))
+
+        if frame_dur:
+            actual_frame_dur_ms = img.GetMetaData('0018|1242')
+            res['frame_dur'].append(float(actual_frame_dur_ms)/1000.0)
 
     return res

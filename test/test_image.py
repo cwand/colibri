@@ -218,3 +218,20 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
         self.assertTrue('tacq' in dyn.keys())
         self.assertFalse('0' in dyn.keys())
         self.assertFalse('2' in dyn.keys())
+
+    def test_frame_dur(self):
+        dcm_path = os.path.join('test', 'data', '8_3V')
+        roi_path = os.path.join(
+            'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+        dyn = colibri.lazy_series_roi_means(dcm_path, roi_path,
+                                            frame_dur=True)
+        frame_durs = dyn['frame_dur']
+        self.assertEqual(3.04, frame_durs[0])
+        self.assertEqual(3.26, frame_durs[1])
+        self.assertEqual(3.26, frame_durs[2])
+        self.assertEqual(3.26, frame_durs[3])
+        self.assertEqual(3.25, frame_durs[4])
+        self.assertEqual(3.26, frame_durs[5])
+        self.assertEqual(3.25, frame_durs[6])
+        self.assertEqual(3.26, frame_durs[7])
+        self.assertEqual(3.26, frame_durs[8])

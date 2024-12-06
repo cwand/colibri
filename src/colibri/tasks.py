@@ -17,6 +17,7 @@ def task_roi_means(task: OrderedDict[str, Any]):
     <labels>ROI_LABEL_1,NEW_LABEL_1;
             ROI_LABEL_2,NEW_LABEL_2;...</labels> <!-- OPTIONAL -->
     <resample>img_OR_roi</resample> <!-- OPTIONAL -->
+    <frame_dur>true_OR_false</frame_dur> <!-- OPTIONAL -->
     <out_path>PATH_TO_RESULT_FILE</out_path>
 
     With the <labels>-tag, new labels can be chosen if the ROI-labels in the
@@ -25,6 +26,9 @@ def task_roi_means(task: OrderedDict[str, Any]):
     series to the ROI image (use the value 'img') or the other way around
     (use the value 'roi'). This is a mandatory input if the two images are
     not in the same physical space.
+    The <frame_dur>-tag can be used to also output the frame duration for each
+    frame. If the tag is not included, the frame duration will be ignored and
+    only relative acquisition times are output.
     """
 
     print("Starting image read and ROI-mean calculation.")
@@ -49,6 +53,12 @@ def task_roi_means(task: OrderedDict[str, Any]):
     if 'resample' in task:
         resample = str(task['resample'])
 
+    # Check if frame duration should be included
+    frame_dur = False
+    if 'frame_dur' in task:
+        if task['frame_dur'] == 'true':
+            frame_dur = True
+
     print("Reading images from ", img_path, ".")
     print("Reading ROI image from ", roi_path, ".")
     print("Processing...")
@@ -56,7 +66,8 @@ def task_roi_means(task: OrderedDict[str, Any]):
     dyn = colibri.lazy_series_roi_means(img_path,
                                         roi_path,
                                         resample=resample,
-                                        labels=labels)
+                                        labels=labels,
+                                        frame_dur=frame_dur)
     print("... done!")
     print()
 
