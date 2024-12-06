@@ -131,7 +131,19 @@ class TestTaskROIMeans(unittest.TestCase):
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         frame_dur = dyn['frame_dur']
         self.assertEqual(frame_dur,
-                         [3.04, 3.26, 3.26, 3.26, 3.25, 3.26, 3.25, 3.26, 3.26])
+                         [3.04, 3.26, 3.26, 3.26, 3.25,
+                          3.26, 3.25, 3.26, 3.26])
+
+    def test_task_ignore(self):
+        f = open(os.path.join(
+            'test', 'xml_input', 'test_roi_means_ignore.xml'))
+        tree = xmltodict.parse(f.read(), xml_attribs=True)
+        task = tree['colibri']['task']
+        colibri.task_roi_means(task)
+        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        self.assertTrue('1' in dyn.keys())
+        self.assertFalse('0' in dyn.keys())
+        self.assertFalse('2' in dyn.keys())
 
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'out.txt')):

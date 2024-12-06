@@ -235,3 +235,13 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
         self.assertEqual(3.25, frame_durs[6])
         self.assertEqual(3.26, frame_durs[7])
         self.assertEqual(3.26, frame_durs[8])
+
+    def test_ignore_label(self):
+        dcm_path = os.path.join('test', 'data', '8_3V')
+        roi_path = os.path.join(
+            'test', 'data', '8_3V_seg', 'Segmentation.nrrd')
+        dyn = colibri.lazy_series_roi_means(dcm_path, roi_path,
+                                            ignore=['0', '2'])
+        self.assertTrue('1' in dyn.keys())
+        self.assertFalse('0' in dyn.keys())
+        self.assertFalse('2' in dyn.keys())

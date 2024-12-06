@@ -28,6 +28,7 @@ def lazy_series_roi_means(series_path: str,
                           roi_path: str,
                           resample: Optional[str] = ...,
                           labels: Optional[dict[str, str]] = ...,
+                          ignore: Optional[list[str]] = ...,
                           frame_dur: bool = ...)\
         -> dict[Union[str, int], list[float]]: ...
 

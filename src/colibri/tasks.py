@@ -16,12 +16,15 @@ def task_roi_means(task: OrderedDict[str, Any]):
     <roi_path>PATH_TO_ROI_IMAGE_FILE</roi_path>
     <labels>ROI_LABEL_1,NEW_LABEL_1;
             ROI_LABEL_2,NEW_LABEL_2;...</labels> <!-- OPTIONAL -->
+    <ignore>LABEL_1,LABEL_2,...</ignore> <!-- OPTIONAL -->
     <resample>img_OR_roi</resample> <!-- OPTIONAL -->
     <frame_dur>true_OR_false</frame_dur> <!-- OPTIONAL -->
     <out_path>PATH_TO_RESULT_FILE</out_path>
 
     With the <labels>-tag, new labels can be chosen if the ROI-labels in the
-    ROI-file are no descriptive.
+    ROI-file are not descriptive.
+    The <ignore> tag can be used to avoid computing roi-means for certain
+    labels.
     The <resample>-tag can be used to resample either the images in the
     series to the ROI image (use the value 'img') or the other way around
     (use the value 'roi'). This is a mandatory input if the two images are
@@ -48,6 +51,14 @@ def task_roi_means(task: OrderedDict[str, Any]):
             label_split = label.split(',')
             labels[label_split[0]] = label_split[1]
 
+    # Create ignore list
+    if 'ignore' in task:
+        # This section transforms the string "a,b,c" into a list of the
+        # form ['a','b','c']
+        ignore = task['ignore'].split(',')
+    else:
+        ignore = []
+
     # Check if resampling is required
     resample: Optional[str] = None
     if 'resample' in task:
@@ -67,6 +78,7 @@ def task_roi_means(task: OrderedDict[str, Any]):
                                         roi_path,
                                         resample=resample,
                                         labels=labels,
+                                        ignore=ignore,
                                         frame_dur=frame_dur)
     print("... done!")
     print()

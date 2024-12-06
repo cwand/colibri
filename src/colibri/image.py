@@ -104,6 +104,7 @@ def lazy_series_roi_means(series_path: str,
                           roi_path: str,
                           resample: Optional[str] = None,
                           labels: Optional[dict[str, str]] = None,
+                          ignore: Optional[list[str]] = None,
                           frame_dur: bool = False)\
         -> dict[str, list[float]]:
     """Do a lazy calculation of mean image values in a ROI. Lazy in this
@@ -135,10 +136,12 @@ def lazy_series_roi_means(series_path: str,
                     for example the ROI label value '1' should be replaced with
                     'left' and the value '2' should be replaced with 'right'
                     use the argument labels={'1': 'left', '2': 'right'}.
+    ignore      --  List of labels to ignore when computing means. Default is
+                    None, in which case all labels will be computed.
     frame_dur   --  If True, the output dictionary will contain the frame
-                    duration as well as its acquisition time. The frame duration
-                    will be stored under the key 'frame_dur' and output in
-                    seconds. Default is false.
+                    duration as well as its acquisition time. The frame
+                    duration will be stored under the key 'frame_dur' and
+                    output in seconds. Default is false.
 
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
@@ -150,6 +153,11 @@ def lazy_series_roi_means(series_path: str,
     # just an empty dict
     if labels is None:
         labels = {}
+
+    # Input sanitation: if no ignoring is needed, the argument is
+    # just an empty list
+    if ignore is None:
+        ignore = []
 
     res: dict[str, list[float]] = defaultdict(list)
 
@@ -190,15 +198,18 @@ def lazy_series_roi_means(series_path: str,
         res['tacq'].append(
             (colibri.get_acq_datetime(name) - acq0).total_seconds())
 
+        # Read frame duration if required
+        if frame_dur:
+            actual_frame_dur_ms = img.GetMetaData('0018|1242')
+            res['frame_dur'].append(float(actual_frame_dur_ms) / 1000.0)
+
         # Apply label stats filter and read ROI means
         label_stats_filter.Execute(img, roi)
         for label in label_stats_filter.GetLabels():
+            if str(label) in ignore:
+                continue
             # Append the mean value to the list for each label.
             res[labels.get(str(label), str(label))].append(
                 label_stats_filter.GetMean(label))
-
-        if frame_dur:
-            actual_frame_dur_ms = img.GetMetaData('0018|1242')
-            res['frame_dur'].append(float(actual_frame_dur_ms)/1000.0)
 
     return res
