@@ -1,0 +1,7 @@
+<colibri>
+    <task name="ROIMeans">
+        <img_path>test/data/8_3V</img_path>
+        <roi_path>test/data/8_3V_seg/Segmentation.nrrd</roi_path>
+        <out_path>test/out.txt</out_path>
+    </task>
+</colibri>
