@@ -1,5 +1,5 @@
 import unittest
-import colibri
+import colibri.model
 
 
 class TestModelFermi2(unittest.TestCase):
@@ -15,10 +15,10 @@ class TestModelFermi2(unittest.TestCase):
         tp = [0.0, 3.7, 7.1, 10.2, 13.5, 17.8]
         in_func = [0.0, 572.1, 3021.5, 123.7, 50.21, 10.5]
 
-        m = colibri.model_fermi_2(amp1=amp, extent1=extent,
-                                  amp2=amp2, extent2=extent2,
-                                  width1=width1, width2=width2,
-                                  t=tp, in_func=in_func)
+        m = colibri.model.model_fermi_2(amp1=amp, extent1=extent,
+                                        amp2=amp2, extent2=extent2,
+                                        width1=width1, width2=width2,
+                                        t=tp, in_func=in_func)
 
         self.assertEqual(6, len(m))
         self.assertAlmostEqual(0.0, m[0], places=4)

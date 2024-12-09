@@ -10,8 +10,8 @@ def main(argv: list[str]):
     print()
 
     tasks = {
-        'ROIMeans': colibri.task_roi_means,
-        'TACFit': colibri.task_tac_fit
+        'ROIMeans': colibri.tasks.task_roi_means,
+        'TACFit': colibri.tasks.task_tac_fit
     }
 
     # Parse XML input file

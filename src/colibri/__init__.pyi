@@ -1,6 +1,8 @@
 import SimpleITK as sitk
 from datetime import datetime
-from typing import Any, Optional, Union, OrderedDict
+from typing import Any, Optional, Union
+
+from colibri import tasks, model
 
 # From core.py
 
@@ -32,43 +34,3 @@ def lazy_series_roi_means(series_path: str,
                           frame_dur: bool = ...)\
         -> dict[Union[str, int], list[float]]: ...
 
-# From model.py
-
-def model_step(t: list[float], in_func: list[float],
-               amp: float, extent: float) -> list[float]: ...
-
-def model_step_2(t: list[float],
-                 in_func: list[float],
-                 amp1: float,
-                 extent1: float,
-                 amp2: float,
-                 extent2: float) -> list[float]: ...
-
-def model_step_fermi(t: list[float],
-                     in_func: list[float],
-                     amp1: float,
-                     extent1: float,
-                     width1: float,
-                     amp2: float,
-                     extent2: float,
-                     width2: float) -> list[float]: ...
-
-def model_fermi_2(t: list[float],
-                  in_func: list[float],
-                  amp1: float,
-                  extent1: float,
-                  width1: float,
-                  amp2: float,
-                  extent2: float,
-                  width2: float) -> list[float]: ...
-
-def model_patlak(t: list[float],
-                 in_func: list[float],
-                 k1: float,
-                 v0: float) -> list[float]: ...
-
-# From tasks.py
-
-def task_roi_means(task: OrderedDict[str, Any]): ...
-
-def task_tac_fit(task: OrderedDict[str, Any]): ...

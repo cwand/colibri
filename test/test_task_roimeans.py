@@ -11,7 +11,7 @@ class TestTaskROIMeans(unittest.TestCase):
             os.path.join('test', 'xml_input', 'test_roi_means_simple.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.task_roi_means(task)
+        colibri.tasks.task_roi_means(task)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
@@ -52,7 +52,7 @@ class TestTaskROIMeans(unittest.TestCase):
             'test', 'xml_input', 'test_roi_means_labels.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.task_roi_means(task)
+        colibri.tasks.task_roi_means(task)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
@@ -93,7 +93,7 @@ class TestTaskROIMeans(unittest.TestCase):
             'test', 'xml_input', 'test_roi_means_resample_img.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.task_roi_means(task)
+        colibri.tasks.task_roi_means(task)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
@@ -110,7 +110,7 @@ class TestTaskROIMeans(unittest.TestCase):
             'test', 'xml_input', 'test_roi_means_resample_roi.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.task_roi_means(task)
+        colibri.tasks.task_roi_means(task)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
@@ -127,7 +127,7 @@ class TestTaskROIMeans(unittest.TestCase):
             'test', 'xml_input', 'test_roi_means_frame_dur.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.task_roi_means(task)
+        colibri.tasks.task_roi_means(task)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         frame_dur = dyn['frame_dur']
         self.assertEqual(frame_dur,
@@ -139,7 +139,7 @@ class TestTaskROIMeans(unittest.TestCase):
             'test', 'xml_input', 'test_roi_means_ignore.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.task_roi_means(task)
+        colibri.tasks.task_roi_means(task)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
         self.assertTrue('1' in dyn.keys())
         self.assertFalse('0' in dyn.keys())

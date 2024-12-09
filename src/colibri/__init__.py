@@ -3,5 +3,8 @@
 
 from .image import *  # noqa
 from .core import *  # noqa
-from .model import *  # noqa
-from .tasks import *  # noqa
+
+from . import tasks
+from . import model
+
+__all__ = ["tasks", "model"]
