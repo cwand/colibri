@@ -114,11 +114,11 @@ def lazy_series_roi_means(series_path: str,
     list and then computing ROI-means, but on the other hand no manipulation
     of the images can be performed after the call of this function.
     The images or the ROI can be resampled before calculation of the mean by
-    using the resample argument. To resample the ROI to the sace of the images
+    using the resample argument. To resample the ROI to the size of the images
     set resample='roi', and to resample the images to the ROI space use
     resample='img'. In either case the resampling is done using
     nearest-neighbour values.
-    The function returns a dictionary object. They keys in the object are
+    The function returns a dictionary object. The keys in the object are
     'tacq' which stores a list of acquisition times (relative to the first
     image) and the labels of the ROI (integers) (see the keyword argument
     'labels' for options). Other keys are also available, see argument list
@@ -127,11 +127,11 @@ def lazy_series_roi_means(series_path: str,
     Arguments:
     series_path --  The path to the images series dicom files
     roi_path    --  The path to the ROI dicom files
-    resample    --  The resmapling strategy. Allowed values are None (no
+    resample    --  The resampling strategy. Allowed values are None (no
                     resampling, default value), 'roi' (resample ROI to image
                     space) or 'img' (resample images to ROI space).
     labels      --  Choose different labels for the resulting dict object. By
-                    default the label values in the ROI image is chosen. A
+                    default, the label values in the ROI image is chosen. A
                     dictionary can be inserted here to replace those values. If
                     for example the ROI label value '1' should be replaced with
                     'left' and the value '2' should be replaced with 'right'
@@ -145,7 +145,7 @@ def lazy_series_roi_means(series_path: str,
 
     Return value:
     A dict object with ROI labels as keys and a list with ROI mean values for
-    every time point in the dynamic series as values. Furthermore the
+    every time point in the dynamic series as values. Furthermore, the
     acquisition times are stored in a list under the key 'tacq'.
     """
 
