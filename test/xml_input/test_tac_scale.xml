@@ -1,0 +1,10 @@
+<colibri>
+    <task name="Correction">
+        <type>ScaleTAC</type>
+        <tac_in>test/data/tac/ex_tac.dat</tac_in>
+        <label>Right</label>
+        <factor>2.0</factor>
+        <new_label>Right2</new_label>
+        <tac_out>test/out.txt</tac_out>
+    </task>
+</colibri>

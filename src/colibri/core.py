@@ -84,7 +84,7 @@ def save_tac(tac: dict[Union[str, int], list[float]], path: str):
 
 
 def load_tac(path: str) -> dict[str, list[float]]:
-    """Loads a TAC-file saved with dynamit1.save_tac.
+    """Loads a TAC-file saved with colibri.save_tac.
 
     Arguments:
     path    --  The filename of the TAC-file.
