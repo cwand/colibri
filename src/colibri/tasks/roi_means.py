@@ -84,5 +84,5 @@ def task_roi_means(task: OrderedDict[str, Any],
     print("Saving images to file ", out_path, ".")
     print("Saving...")
     # Save file to disk
-    colibri.save_tac(dyn, out_path)
+    colibri.save_table(dyn, out_path)
     print("... done!")

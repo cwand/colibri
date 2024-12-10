@@ -14,7 +14,7 @@ class TestTaskROIMeans(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_roi_means(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
                          [0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
@@ -56,7 +56,7 @@ class TestTaskROIMeans(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_roi_means(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
                          [0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
@@ -98,7 +98,7 @@ class TestTaskROIMeans(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_roi_means(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
                          [0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
@@ -116,7 +116,7 @@ class TestTaskROIMeans(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_roi_means(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
         tacq = dyn['tacq']
         self.assertEqual(tacq,
                          [0, 3.0, 6.3, 9.5, 12.8, 16.0, 19.3, 22.5, 25.8])
@@ -134,7 +134,7 @@ class TestTaskROIMeans(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_roi_means(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
         frame_dur = dyn['frame_dur']
         self.assertEqual(frame_dur,
                          [3.04, 3.26, 3.26, 3.26, 3.25,
@@ -147,7 +147,7 @@ class TestTaskROIMeans(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_roi_means(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
         self.assertTrue('1' in dyn.keys())
         self.assertFalse('0' in dyn.keys())
         self.assertFalse('2' in dyn.keys())

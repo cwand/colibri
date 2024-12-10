@@ -14,7 +14,7 @@ class TestTaskScaleTAC(unittest.TestCase):
         task = tree['colibri']['task']
         no: dict[str, Any] = {}
         colibri.tasks.task_apply_correction(task, no)
-        dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
+        dyn = colibri.load_table(os.path.join('test', 'out.txt'))
 
         tacq = dyn['tacq']
         r1 = dyn['0']

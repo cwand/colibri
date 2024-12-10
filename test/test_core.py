@@ -38,16 +38,16 @@ class TestShiftTime(unittest.TestCase):
         self.assertAlmostEqual(3.0, res[2], places=6)
 
 
-class TestSaveLoadTAC(unittest.TestCase):
+class TestSaveLoadDict(unittest.TestCase):
 
-    def test_save_load_tac(self):
+    def test_save_load_table(self):
         tac: dict[Union[str, int], list[float]] = \
             {1: [1.0, 2.0, 3.0],
              '2': [0.5, 0.1, 3.0],
              'tacq': [0.0, 1.2, 5.4]
              }
-        colibri.save_tac(tac, os.path.join('test', 'tac.txt'))
-        tac2 = colibri.load_tac(os.path.join('test', 'tac.txt'))
+        colibri.save_table(tac, os.path.join('test', 'tac.txt'))
+        tac2 = colibri.load_table(os.path.join('test', 'tac.txt'))
         self.assertEqual(tac2['tacq'], [0.0, 1.2, 5.4])
         self.assertEqual(tac2['1'], [1.0, 2.0, 3.0])
         self.assertEqual(tac2['2'], [0.5, 0.1, 3.0])

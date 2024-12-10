@@ -62,20 +62,20 @@ def shift_time(y: list[float], t: list[float],
     return list(np.interp(t_inter, t, y))
 
 
-def save_tac(tac: dict[Union[str, int], list[float]], path: str):
-    """Saves the output from a function calculating ROI-means into a text file
+def save_table(table: dict[Union[str, int], list[float]], path: str):
+    """Saves a table represented by a dict object to a text file
     using numpy.savetxt.
 
     Arguments:
-    tac     --  The TAC-data (e.g. from lazy_series_roi_means)
+    table   --  The table-data (e.g. from lazy_series_roi_means)
     path    --  The filename where the data will be saved.
     """
 
     # Put data and header text into appropriate containers
     columns = []
     header = ""
-    for label in tac:
-        columns.append(tac[label])
+    for label in table:
+        columns.append(table[label])
         header = header + str(label) + "   "
 
     # Put data into columns and save to file
@@ -83,11 +83,11 @@ def save_tac(tac: dict[Union[str, int], list[float]], path: str):
     np.savetxt(path, data, header=header)
 
 
-def load_tac(path: str) -> dict[str, list[float]]:
-    """Loads a TAC-file saved with colibri.save_tac.
+def load_table(path: str) -> dict[str, list[float]]:
+    """Loads a table saved with colibri.save_tac.
 
     Arguments:
-    path    --  The filename of the TAC-file.
+    path    --  The filename of the file containing the table.
 
     Return value:
     A dict object with column headers as keys and data as values.

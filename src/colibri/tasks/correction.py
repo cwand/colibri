@@ -32,7 +32,7 @@ def _scale_tac(task: OrderedDict[str, Any],
     # Get the input TAC-file
     tac_path = str(task['tac_in'])
     print("Loading TAC from ", tac_path, "...")
-    dyn = colibri.load_tac(tac_path)
+    dyn = colibri.load_table(tac_path)
     print("... done!")
 
     # Prepare output dict
@@ -53,5 +53,5 @@ def _scale_tac(task: OrderedDict[str, Any],
     # Save the result
     out_path = str(task['tac_out'])
     print("Saving new TAC to file ", out_path, "...")
-    colibri.save_tac(dyn_cor, out_path)
+    colibri.save_table(dyn_cor, out_path)
     print("... done!")

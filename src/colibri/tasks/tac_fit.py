@@ -45,7 +45,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
 
     # Load TAC data
     print("Loading TAC-data from", tac_path, "...")
-    tac = colibri.load_tac(tac_path)
+    tac = colibri.load_table(tac_path)
     print("... done!")
     print()
 
