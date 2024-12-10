@@ -3,7 +3,8 @@ import numpy as np
 import colibri
 
 
-def task_apply_correction(task: OrderedDict[str, Any]):
+def task_apply_correction(task: OrderedDict[str, Any],
+                          named_obj: dict[str, Any]):
     """Apply a data correction to a set of data. Several correction strategies
     can be used, and each is selcted by setting the xml-tag <type>:
 
@@ -23,10 +24,11 @@ def task_apply_correction(task: OrderedDict[str, Any]):
     # Check correction type:
     cor_type = str(task['type'])
     if cor_type == "ScaleTAC":
-        _scale_tac(task)
+        _scale_tac(task, named_obj)
 
 
-def _scale_tac(task: OrderedDict[str, Any]):
+def _scale_tac(task: OrderedDict[str, Any],
+               named_obj: dict[str, Any]):
     # Get the input TAC-file
     tac_path = str(task['tac_in'])
     print("Loading TAC from ", tac_path, "...")

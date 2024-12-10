@@ -2,7 +2,8 @@ from typing import OrderedDict, Any, Optional
 import colibri
 
 
-def task_roi_means(task: OrderedDict[str, Any]):
+def task_roi_means(task: OrderedDict[str, Any],
+                   named_obj: dict[str, Any]):
     """Run the ROIMeans task. Loads an image series and a ROI image, and
     computes mean voxel values for each ROI in each time frame. The result
     is saved to a text file.

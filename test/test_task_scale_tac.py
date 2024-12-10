@@ -2,6 +2,7 @@ import unittest
 import xmltodict
 import colibri
 import os
+from typing import Any
 
 
 class TestTaskScaleTAC(unittest.TestCase):
@@ -11,7 +12,8 @@ class TestTaskScaleTAC(unittest.TestCase):
             os.path.join('test', 'xml_input', 'test_tac_scale.xml'))
         tree = xmltodict.parse(f.read(), xml_attribs=True)
         task = tree['colibri']['task']
-        colibri.tasks.task_apply_correction(task)
+        no: dict[str, Any] = {}
+        colibri.tasks.task_apply_correction(task, no)
         dyn = colibri.load_tac(os.path.join('test', 'out.txt'))
 
         tacq = dyn['tacq']

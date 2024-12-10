@@ -4,7 +4,8 @@ import lmfit
 import matplotlib.pyplot as plt
 
 
-def task_tac_fit(task: OrderedDict[str, Any]):
+def task_tac_fit(task: OrderedDict[str, Any],
+                 named_obj: dict[str, Any]):
     """Run the TACFit task. Fits model parameters to a measured TAC. The fit
     is shown in standard out and a figure of the fitted curve and the data is
     shown.
