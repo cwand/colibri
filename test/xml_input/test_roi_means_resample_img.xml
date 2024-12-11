@@ -3,6 +3,6 @@
         <img_path>test/data/8_3V</img_path>
         <roi_path>test/data/8_3V_seg/Segmentation_2.nrrd</roi_path>
         <resample>img</resample>
-        <out_path>test/out.txt</out_path>
+        <res_name>tac</res_name>
     </task>
 </colibri>

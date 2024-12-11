@@ -6,7 +6,7 @@ def task_roi_means(task: OrderedDict[str, Any],
                    named_obj: dict[str, Any]):
     """Run the ROIMeans task. Loads an image series and a ROI image, and
     computes mean voxel values for each ROI in each time frame. The result
-    is saved to a text file.
+    is saved as a table to named_obj.
     The input to the function is an xml structure, which must have the
     following structure (not ordered):
 
@@ -17,7 +17,7 @@ def task_roi_means(task: OrderedDict[str, Any],
     <ignore>LABEL_1,LABEL_2,...</ignore> <!-- OPTIONAL -->
     <resample>img_OR_roi</resample> <!-- OPTIONAL -->
     <frame_dur>true_OR_false</frame_dur> <!-- OPTIONAL -->
-    <out_path>PATH_TO_RESULT_FILE</out_path>
+    <res_name>TABLE_KEY_IN_NAMED_OBJ</res_name>
 
     With the <labels>-tag, new labels can be chosen if the ROI-labels in the
     ROI-file are not descriptive.
@@ -37,7 +37,7 @@ def task_roi_means(task: OrderedDict[str, Any],
     # Get the image and output paths
     img_path = str(task['img_path'])
     roi_path = str(task['roi_path'])
-    out_path = str(task['out_path'])
+    res_name = str(task['res_name'])
 
     # Create label dictionary
     labels = {}
@@ -81,8 +81,7 @@ def task_roi_means(task: OrderedDict[str, Any],
     print("... done!")
     print()
 
-    print("Saving images to file ", out_path, ".")
-    print("Saving...")
-    # Save file to disk
-    colibri.save_table(dyn, out_path)
+    print("Storing result as ", res_name, " in named_obj...")
+    # Put result in named_obj
+    named_obj[res_name] = dyn
     print("... done!")
