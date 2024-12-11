@@ -1,0 +1,6 @@
+<colibri>
+    <task name="SaveTable">
+        <name>table</name>
+        <file>test/out.txt</file>
+    </task>
+</colibri>

@@ -1,0 +1,6 @@
+<colibri>
+    <task name="LoadTable">
+        <name>table</name>
+        <file>test/data/tac/ex_tac2.dat</file>
+    </task>
+</colibri>
