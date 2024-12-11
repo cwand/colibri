@@ -12,7 +12,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
     The input is an xml-structure, which must have the following content (in
     any order):
 
-    <tac_path>PATH_TO_TAC_FILE</tac_path>
+    <tac_name>TAC_KEY_IN_NAMED_OBJ</tac_name>
     <time_label>LABEL_OF_TIME_DATA</time_label>
     <inp_label>LABEL_OF_INPUT_FUNCTION_DATA</inp_label>
     <tis_label>LABEL_OF_TISSUE_DATA</tis_label>
@@ -33,7 +33,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
     print("Starting TAC-fitting.")
 
     # Get the data path
-    tac_path = str(task['tac_path'])
+    tac_name = str(task['tac_name'])
 
     # Get labels of relevant TACs
     inp_label = str(task['inp_label'])
@@ -44,8 +44,8 @@ def task_tac_fit(task: OrderedDict[str, Any],
     fit_model = str(task['model'])
 
     # Load TAC data
-    print("Loading TAC-data from", tac_path, "...")
-    tac = colibri.load_table(tac_path)
+    print("Loading TAC-data as ", tac_name, " in named_obj...")
+    tac = named_obj[tac_name]
     print("... done!")
     print()
 
