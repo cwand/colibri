@@ -10,12 +10,12 @@ def _model_step_fermi_integrand(tau: float, t: float,
                                 width2: float,
                                 tp: list[float],
                                 in_func: list[float]) -> float:
-    """Defines the integrand when the input response is a 2-step
-    fermi-function. The response function is defined on the domain
-    [0, infinty). It has value amp1+amp2 on at t=0, stays nearly constant until
-    t=extent1 where it transitions smoothly to a vlaue of amp2. It then stays
-    nearly constant at amp2 until t=extent2, where it smoothly approaches a
-    value of 0.
+    """Defines the integrand when the input response is the sum of a step
+    function and a fermi-function. The response function is defined on the
+    domain [0, infinity). The step function has the value amp1 from t=0 to
+    extent1, where it drops to zero. The fermi function has the value amp2
+    at t=0 and stays nearly constant until t=extent2, where it drops
+    smoothly to zero at a rate given by width2.
     The integrand is the product of the response function evaluated at t-tau
     and the input function evaluated at tau. The input function is interpolated
     linearly between the sampled points.
@@ -23,12 +23,11 @@ def _model_step_fermi_integrand(tau: float, t: float,
     Arguments:
     tau     --  The integration variable.
     t       --  The time point at which the integral is evaluated.
-    amp1    --  The amplitude of the first fermi function.
-    extent1 --  The length of the first fermi function.
-    width1  --  The decay width of the first fermi function.
-    amp2    --  The amplitude of the second fermi function.
-    extent2 --  The length of the second fermi function.
-    width2  --  The decay width of the second fermi function
+    amp1    --  The amplitude of the step function.
+    extent1 --  The length of the step function.
+    amp2    --  The amplitude of the fermi function.
+    extent2 --  The length of the fermi function.
+    width2  --  The decay width of the fermi function
     tp      --  The time points of the input function samples.
     in_func --  The input function samples.
 
@@ -54,17 +53,18 @@ def model_step_fermi(t: list[float],
                      amp2: float,
                      extent2: float,
                      width2) -> list[float]:
-    """Solves the model where the input response function is assumed to be a
-    2-step fermi-function.
+    """Solves the model where the input response function is assumed to be the
+    sum of a step function and a fermi-function.
     This function calculates the convolution of a sampled input function with
     a 2-step fermi-function.
-    The formula for the fermi function is:
-    f = A1 * (1 + exp(-t1/b1)) / (1 + exp((t-t1)/b1)) + ...
-    The ... indicates a second term of exactly the same construction, but
-    other parameters.
-    A1 is called the amplitude (of the first fermi function)
-    t1 is called the extent (of the first fermi function)
-    b1 is called the width (of the first fermi function)
+    The formula for the response function is:
+    f = A1*step(t-t1) + A2 * (1 + exp(-t2/b2)) / (1 + exp((t-t2)/b2))
+    step(t) = 1 if t<=0 and step(t) = 0 if t>0
+    A1 is called the amplitude of the step function
+    t1 is called the extent of the step function
+    A2 is called the amplitude of the fermi function
+    t2 is called the extent of the fermi function
+    b2 is called the width of the fermi function
     The convolution is evaluated at the same time points as the sampled
     input function and returned as a list.
     The convolution is performed numerically using scipy.integrate.quad and
@@ -73,12 +73,11 @@ def model_step_fermi(t: list[float],
     Arguments:
     t       --  The time points of the input function samples.
     in_func --  The input function samples.
-    amp1    --  The amplitude of the first fermi function.
-    extent1 --  The length of the first function.
-    width1  --  The decay width of the first fermi function.
-    amp2    --  The amplitude of the second fermi function.
-    extent2 --  The length of the second fermi function.
-    width2  --  The decay width of the second fermi function.
+    amp1    --  The amplitude of the step function.
+    extent1 --  The length of the step function.
+    amp2    --  The amplitude of the fermi function.
+    extent2 --  The length of the fermi function.
+    width2  --  The decay width of the fermi function.
 
     Return value:
     A list containing the modeled values at each time point.
