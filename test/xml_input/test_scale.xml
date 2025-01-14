@@ -1,0 +1,9 @@
+<colibri>
+    <task name="Correction">
+        <type>Scale</type>
+        <table_name>ttest</table_name>
+        <label_in>Right</label_in>
+        <factor>2.0</factor>
+        <label_out>Right2</label_out>
+    </task>
+</colibri>
