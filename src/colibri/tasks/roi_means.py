@@ -85,3 +85,4 @@ def task_roi_means(task: OrderedDict[str, Any],
     # Put result in named_obj
     named_obj[res_name] = dyn
     print("... done!")
+    print()
