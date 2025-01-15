@@ -59,6 +59,17 @@ def _fit_lmfit(time_data: list[float],
     print()
 
 
+def _fit_scipy(time_data: list[float],
+               tissue_data: list[float],
+               input_data: list[float],
+               model: Callable[..., list[float]],
+               params: dict[str, dict[str, float]],
+               labels: dict[str, str],
+               tcut: int) -> None:
+
+    pass
+
+
 def task_tac_fit(task: OrderedDict[str, Any],
                  named_obj: dict[str, Any]):
     """Run the TACFit task. Fits model parameters to a measured TAC. The fit
@@ -143,6 +154,16 @@ def task_tac_fit(task: OrderedDict[str, Any],
     # Fit using desired model
     if backend == 'lmfit':
         _fit_lmfit(
+            time_data=tac[time_label],
+            tissue_data=tac[tis_label],
+            input_data=tac[inp_label],
+            model=models[fit_model],  # type: ignore
+            params=params,
+            labels={'input': inp_label, 'tissue': tis_label},
+            tcut=t_cut
+        )
+    elif backend == 'scipy':
+        _fit_scipy(
             time_data=tac[time_label],
             tissue_data=tac[tis_label],
             input_data=tac[inp_label],
