@@ -36,7 +36,8 @@ def _scale_tac(task: OrderedDict[str, Any],
     new_label = task['label_out']
     old_label = task['label_in']
     factor = float(task['factor'])
-    print("Applying correction to label", old_label,
+    print("Scaling label", old_label, "by factor", factor,
           "and saving as label", new_label, "...")
     tab[new_label] = np.array(tab[old_label]) * factor
     print("... done!")
+    print()
