@@ -1,4 +1,5 @@
 from typing import OrderedDict, Callable, Any
+
 import colibri
 import lmfit
 import matplotlib.pyplot as plt
@@ -11,6 +12,7 @@ def _fit_lmfit(time_data: list[float],
                params: dict[str, dict[str, float]],
                labels: dict[str, str],
                tcut: int) -> None:
+    # Fit a TAC to a given function using lmfit
 
     # Create lmfit Parameters-object
     parameters = lmfit.create_params(**params)
@@ -27,7 +29,7 @@ def _fit_lmfit(time_data: list[float],
     lmfit.report_fit(res)
     # Calculate best fitting model
     best_fit = model(time_data[0:tcut],
-                     list(input_data[0:tcut]),
+                     input_data[0:tcut],
                      **res.best_values)
     # Calculate prediction interval
     e_fit = res.eval_uncertainty(t=time_data[0:tcut], sigma=2)
@@ -59,17 +61,6 @@ def _fit_lmfit(time_data: list[float],
     print()
 
 
-def _fit_scipy(time_data: list[float],
-               tissue_data: list[float],
-               input_data: list[float],
-               model: Callable[..., list[float]],
-               params: dict[str, dict[str, float]],
-               labels: dict[str, str],
-               tcut: int) -> None:
-
-    pass
-
-
 def task_tac_fit(task: OrderedDict[str, Any],
                  named_obj: dict[str, Any]):
     """Run the TACFit task. Fits model parameters to a measured TAC. The fit
@@ -82,7 +73,6 @@ def task_tac_fit(task: OrderedDict[str, Any],
     <time_label>LABEL_OF_TIME_DATA</time_label>
     <inp_label>LABEL_OF_INPUT_FUNCTION_DATA</inp_label>
     <tis_label>LABEL_OF_TISSUE_DATA</tis_label>
-    <backend>lmfit(default)_OR_scipy</backend> <!-- OPTIONAL -->
     <model>FIT_MODEL</model>
     <param>
         <name>PARAM1_NAME</name>
@@ -110,11 +100,6 @@ def task_tac_fit(task: OrderedDict[str, Any],
     # Get required fit model:
     fit_model = str(task['model'])
 
-    # Determine fitting backend required
-    backend = 'lmfit'
-    if 'backend' in task:
-        backend = str(task['backend'])
-
     # Load TAC data
     print("Loading TAC-data as ", tac_name, " in named_obj...")
     tac = named_obj[tac_name]
@@ -126,7 +111,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
     if 'tcut' in task:
         t_cut = int(task['tcut'])
 
-    print("Fitting TAC data to model", fit_model, "using", backend, ".")
+    print("Fitting TAC data to model", fit_model, ".")
 
     # Dict of possible models
     models = {
@@ -151,24 +136,13 @@ def task_tac_fit(task: OrderedDict[str, Any],
         # Get parameter name and store in dict
         params[param['name']] = param_dict
 
-    # Fit using desired model
-    if backend == 'lmfit':
-        _fit_lmfit(
-            time_data=tac[time_label],
-            tissue_data=tac[tis_label],
-            input_data=tac[inp_label],
-            model=models[fit_model],  # type: ignore
-            params=params,
-            labels={'input': inp_label, 'tissue': tis_label},
-            tcut=t_cut
-        )
-    elif backend == 'scipy':
-        _fit_scipy(
-            time_data=tac[time_label],
-            tissue_data=tac[tis_label],
-            input_data=tac[inp_label],
-            model=models[fit_model],  # type: ignore
-            params=params,
-            labels={'input': inp_label, 'tissue': tis_label},
-            tcut=t_cut
-        )
+    # Fit using lmfit
+    _fit_lmfit(
+        time_data=tac[time_label],
+        tissue_data=tac[tis_label],
+        input_data=tac[inp_label],
+        model=models[fit_model],  # type: ignore
+        params=params,
+        labels={'input': inp_label, 'tissue': tis_label},
+        tcut=t_cut
+    )

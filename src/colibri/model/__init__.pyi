@@ -14,7 +14,6 @@ def model_step_fermi(t: list[float],
                      in_func: list[float],
                      amp1: float,
                      extent1: float,
-                     width1: float,
                      amp2: float,
                      extent2: float,
                      width2: float) -> list[float]: ...
