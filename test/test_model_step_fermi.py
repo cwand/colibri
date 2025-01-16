@@ -26,4 +26,3 @@ class TestModelStepFermi(unittest.TestCase):
         self.assertAlmostEqual(3199.0777, m[3], places=2)
         self.assertAlmostEqual(1839.3696, m[4], places=2)
         self.assertAlmostEqual(745.0176, m[5], places=2)
-        
