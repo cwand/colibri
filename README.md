@@ -31,9 +31,9 @@ Install colibri and required dependencies
 If everything has gone right, you should be able to run colibri
 ```
 > python -m colibri
-Starting COLIBRI
+Starting COLIBRI 1.0.1
 
-Missing command line argument: path to an XML file.
+Missing command line argument: path to an XML file. Exiting!
 ```
 
 ## Using colibri
@@ -70,7 +70,7 @@ To pass data from one task to the other, a "Named Object" container is available
 When the XML-file is done, colibri can be run using
 ```
 > python -m colibri path/to/XML/file.xml
-Starting COLIBRI
+Starting COLIBRI 1.0.1
 
 ...
 ```

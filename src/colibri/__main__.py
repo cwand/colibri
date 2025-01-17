@@ -2,11 +2,15 @@ import sys
 import colibri
 import xmltodict
 from typing import Any
+import importlib.metadata
 
 
 def main(argv: list[str]):
 
-    print("Starting COLIBRI")
+    # Get version number from pyproject.toml
+    __version__ = importlib.metadata.version("colibri")
+
+    print("Starting COLIBRI", __version__)
     print()
 
     # Define tasks
@@ -23,9 +27,9 @@ def main(argv: list[str]):
 
     # Parse XML input file
     if len(argv) != 1:
-        exit("Missing command line argument: path to an XML file.")
+        exit("Missing command line argument: path to an XML file. Exiting!")
     xml_file = open(argv[0], "r")
-    task_tree = xmltodict.parse(xml_file.read(), force_list=('task'))
+    task_tree = xmltodict.parse(xml_file.read(), force_list='task')
     root = task_tree['colibri']
 
     for task in root['task']:
