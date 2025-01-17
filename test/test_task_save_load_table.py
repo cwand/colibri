@@ -39,6 +39,16 @@ class TestTaskSaveLoadTable(unittest.TestCase):
         self.assertAlmostEqual(r1[2], 3.5, places=7)
         self.assertAlmostEqual(r2[2], -2.0, places=7)
 
+    def test_task_save_table_fail_missing_tag(self):
+        f = open(
+            os.path.join('test', 'xml_input', 'test_save_table.xml'))
+        tree = xmltodict.parse(f.read(), xml_attribs=True)
+        task = tree['colibri']['task']
+        del task['file']
+        self.assertRaisesRegex(KeyError,
+                               "Missing tags in SaveTable task: <file>",
+                               colibri.tasks.task_save_table, task, {})
+
     def test_task_load_table(self):
         f = open(
             os.path.join('test', 'xml_input', 'test_load_table.xml'))
@@ -64,6 +74,16 @@ class TestTaskSaveLoadTable(unittest.TestCase):
         self.assertAlmostEqual(tacq[2], 2.0, places=7)
         self.assertAlmostEqual(r1[2], 3.5, places=7)
         self.assertAlmostEqual(r2[2], -2.0, places=7)
+
+    def test_task_load_table_fail_missing_tag(self):
+        f = open(
+            os.path.join('test', 'xml_input', 'test_load_table.xml'))
+        tree = xmltodict.parse(f.read(), xml_attribs=True)
+        task = tree['colibri']['task']
+        del task['name']
+        self.assertRaisesRegex(KeyError,
+                               "Missing tags in LoadTable task: <name>",
+                               colibri.tasks.task_load_table, task, {})
 
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'out.txt')):
