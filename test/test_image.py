@@ -245,3 +245,15 @@ class TestLazySeriesRoiMeans(unittest.TestCase):
         self.assertTrue('1' in dyn.keys())
         self.assertFalse('0' in dyn.keys())
         self.assertFalse('2' in dyn.keys())
+
+
+class TestSegmentationVolume(unittest.TestCase):
+
+    def test_volume(self):
+        roi = sitk.ReadImage(
+            os.path.join('test', 'data', '8_3V_seg', 'Segmentation.nrrd'))
+
+        r = colibri.segment_volume(roi)
+
+        self.assertAlmostEqual(r['1'], 29.1784, places=4)
+        self.assertAlmostEqual(r['2'], 58.3568, places=4)

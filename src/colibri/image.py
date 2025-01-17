@@ -213,3 +213,38 @@ def lazy_series_roi_means(series_path: str,
                 label_stats_filter.GetMean(label))
 
     return res
+
+
+def segment_volume(roi: sitk.Image) -> dict[str, float]:
+    """Computes the volume in millilitres of all segments in a segmentation.
+    The result is returned in a dictionary object, where the segment labels
+    are keys and the volume is the value.
+
+    Arguments:
+    roi     --  The segmentation as a SimpleITK image.
+
+    Returns:
+    A dictionary object where the segment labels are keys and the volume is the
+    corresponding value given in millilitres (mL).
+    """
+
+    # First get the voxel volume
+    spacing = roi.GetSpacing()  # in mm
+    voxel_volume = spacing[0] * spacing[1] * spacing[2]  # in mm^3
+
+    # Get all labels in the ROI
+    label_stats = sitk.LabelShapeStatisticsImageFilter()
+    label_stats.Execute(roi)
+
+    res = {}
+    for label in label_stats.GetLabels():
+        # Get number of voxels for this label
+        nvox = label_stats.GetNumberOfPixels(label)
+
+        # The volume is just the voxel volume times the voxel count
+        vol = nvox*voxel_volume/1000.0
+
+        # Insert into result
+        res[str(label)] = vol
+
+    return res
