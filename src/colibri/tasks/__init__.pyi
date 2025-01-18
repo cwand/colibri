@@ -1,5 +1,9 @@
 from typing import OrderedDict, Any
 
+def _check_tags(task_name: str,
+                task: OrderedDict[str, Any],
+                required_tags: list[str]): ...
+
 def task_save_table(task: OrderedDict[str, Any],
                     named_obj: dict[str, Any]): ...
 

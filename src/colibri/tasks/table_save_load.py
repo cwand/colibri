@@ -1,4 +1,5 @@
 from typing import OrderedDict, Any
+from colibri.tasks import task_common
 import colibri
 
 
@@ -11,17 +12,8 @@ def task_save_table(task: OrderedDict[str, Any],
     <file>FILE_PATH_TO_WRITE</file>
     """
 
-    # Check tags:
-    missing = []
-    required = ['file', 'name']
-    for k in required:
-        if k not in task:
-            missing.append(k)
-    if len(missing) > 0:
-        msg = "Missing tags in SaveTable task:"
-        for t in missing:
-            msg = msg + " <" + t + ">"
-        raise KeyError(msg)
+    # Check tags
+    task_common._check_tags("SaveTable", task, ['file', 'name'])
 
     file_path = task['file']
     table_name = task['name']
