@@ -26,3 +26,19 @@ class TestTaskScale(unittest.TestCase):
         self.assertEqual(no['ttest']['Right2'][1], 2.0)
         self.assertEqual(no['ttest']['Right2'][2], 3.0)
         self.assertEqual(no['ttest']['Right2'][3], -4.0)
+
+    def test_task_fails_missing_tags(self):
+        f = open(
+            os.path.join('test', 'xml_input', 'test_scale.xml'))
+        tree = xmltodict.parse(f.read(), xml_attribs=True)
+        task = tree['colibri']['task']
+
+        del task['table_name']
+        del task['label_in']
+        del task['label_out']
+        del task['factor']
+
+        self.assertRaisesRegex(KeyError,
+                               "Missing tags in Correction/Scale task: "
+                               "<table_name> <label_in> <label_out> <factor>",
+                               colibri.tasks.task_apply_correction, task, {})

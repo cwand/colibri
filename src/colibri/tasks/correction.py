@@ -1,5 +1,6 @@
 from typing import OrderedDict, Any
 import numpy as np
+from colibri.tasks import task_common
 
 
 def task_apply_correction(task: OrderedDict[str, Any],
@@ -19,6 +20,9 @@ def task_apply_correction(task: OrderedDict[str, Any],
 
     print("Applying correction.")
 
+    # Check tags
+    task_common._check_tags("Correction", task, ['type'])
+
     # Check correction type:
     cor_type = str(task['type'])
     if cor_type == "Scale":
@@ -27,6 +31,10 @@ def task_apply_correction(task: OrderedDict[str, Any],
 
 def _scale_tac(task: OrderedDict[str, Any],
                named_obj: dict[str, Any]):
+    # Check required tags
+    task_common._check_tags("Correction/Scale", task,
+                            ['table_name', 'label_in', 'label_out', 'factor'])
+
     # Get the input table from named obj
     print("Loading table", task['table_name'], "from named_obj...")
     tab = named_obj[task['table_name']]
