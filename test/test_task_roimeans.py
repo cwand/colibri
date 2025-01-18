@@ -152,6 +152,20 @@ class TestTaskROIMeans(unittest.TestCase):
         self.assertFalse('0' in dyn.keys())
         self.assertFalse('2' in dyn.keys())
 
+    def test_task_fail_missing_tags(self):
+        f = open(os.path.join(
+            'test', 'xml_input', 'test_roi_means_simple.xml'))
+        tree = xmltodict.parse(f.read(), xml_attribs=True)
+        task = tree['colibri']['task']
+        task['Dummy'] = 3
+        del task['img_path']
+        del task['roi_path']
+        del task['res_name']
+        self.assertRaisesRegex(KeyError,
+                               "Missing tags in ROIMeans task: "
+                               "<img_path> <roi_path> <res_name>",
+                               colibri.tasks.task_roi_means, task, {})
+
     def tearDown(self):
         if os.path.exists(os.path.join('test', 'out.txt')):
             os.remove(os.path.join('test', 'out.txt'))

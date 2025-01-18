@@ -1,5 +1,6 @@
 from typing import OrderedDict, Any, Optional
 import colibri
+from colibri.tasks import task_common
 
 
 def task_roi_means(task: OrderedDict[str, Any],
@@ -33,6 +34,10 @@ def task_roi_means(task: OrderedDict[str, Any],
     """
 
     print("Starting image read and ROI-mean calculation.")
+
+    # Check required tags
+    task_common._check_tags("ROIMeans", task,
+                            ['img_path', 'roi_path', 'res_name'])
 
     # Get the image and output paths
     img_path = str(task['img_path'])
