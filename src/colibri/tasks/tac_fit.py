@@ -1,6 +1,7 @@
 from typing import OrderedDict, Callable, Any
 
 import colibri
+from colibri.tasks import task_common
 import lmfit
 import matplotlib.pyplot as plt
 
@@ -88,6 +89,11 @@ def task_tac_fit(task: OrderedDict[str, Any],
     """
 
     print("Starting TAC-fitting.")
+
+    # Check required tags are present
+    task_common._check_tags("TACFit", task,
+                            ['tac_name', 'time_label', 'inp_label',
+                             'tis_label', 'model'])
 
     # Get the data path
     tac_name = str(task['tac_name'])
