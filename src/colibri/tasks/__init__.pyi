@@ -13,6 +13,9 @@ def task_load_table(task: OrderedDict[str, Any],
 def task_roi_means(task: OrderedDict[str, Any],
                    named_obj: dict[str, Any]): ...
 
+def task_tac_plot(task: OrderedDict[str, Any],
+                  named_obj: dict[str, Any]): ...
+
 def task_tac_fit(task: OrderedDict[str, Any],
                  named_obj: dict[str, Any]): ...
 

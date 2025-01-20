@@ -1,0 +1,14 @@
+<colibri>
+    <task name="ROIMeans">
+        <img_path>test/data/8_3V</img_path>
+        <roi_path>test/data/8_3V_seg/Segmentation.nrrd</roi_path>
+        <res_name>tac</res_name>
+    </task>
+    <task name="TACPlot">
+        <tac_name>tac</tac_name>
+        <time_label>tacq</time_label>
+        <labels>1,2</labels>
+        <xlabel>Time [sec]</xlabel>
+        <ylabel>ROI Mean activity conc. [Bq/mL]</ylabel>
+    </task>
+</colibri>

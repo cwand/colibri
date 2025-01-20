@@ -17,6 +17,7 @@ def main(argv: list[str]):
     tasks = {
         'ROIMeans': colibri.tasks.task_roi_means,
         'TACFit': colibri.tasks.task_tac_fit,
+        'TACPlot': colibri.tasks.task_tac_plot,
         'Correction': colibri.tasks.task_apply_correction,
         'SaveTable': colibri.tasks.task_save_table,
         'LoadTable': colibri.tasks.task_load_table
