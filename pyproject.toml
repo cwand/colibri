@@ -35,7 +35,10 @@ dependencies = [
 	'matplotlib',
 	'scipy',
 	'lmfit',
-	'xmltodict'
+	'xmltodict',
+	'emcee>3.0.0',
+	'tqdm',
+	'pandas'
 ]
 
 [project.urls]

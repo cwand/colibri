@@ -10,5 +10,6 @@ class TestTACFit(unittest.TestCase):
         task = OrderedDict[str, Any]()
         self.assertRaisesRegex(KeyError,
                                "Missing tags in TACFit task: <tac_name> "
-                               "<time_label> <inp_label> <tis_label> <model>",
+                               "<time_label> <inp_label> <tis_label> <method> "
+                               "<model>",
                                colibri.tasks.task_tac_fit, task, {})

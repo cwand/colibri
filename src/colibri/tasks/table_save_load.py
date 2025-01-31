@@ -12,12 +12,17 @@ def task_save_table(task: OrderedDict[str, Any],
     <file>FILE_PATH_TO_WRITE</file>
     """
 
+    print("Saving table to file.")
+
     # Check tags
     task_common._check_tags("SaveTable", task, ['file', 'name'])
 
     file_path = task['file']
     table_name = task['name']
+    print("Saving table", table_name, "to file", file_path, "...")
     colibri.save_table(named_obj[table_name], file_path)
+    print("... done!")
+    print()
 
 
 def task_load_table(task: OrderedDict[str, Any],
@@ -29,18 +34,14 @@ def task_load_table(task: OrderedDict[str, Any],
     <file>FILE_PATH_TO_READ</file>
     """
 
+    print("Loading table from file.")
+
     # Check tags:
-    missing = []
-    required = ['file', 'name']
-    for k in required:
-        if k not in task:
-            missing.append(k)
-    if len(missing) > 0:
-        msg = "Missing tags in LoadTable task:"
-        for t in missing:
-            msg = msg + " <" + t + ">"
-        raise KeyError(msg)
+    task_common._check_tags("LoadTable", task, ['file', 'name'])
 
     file_path = task['file']
     table_name = task['name']
+    print("Loading table", table_name, "from file", file_path, "...")
     named_obj[table_name] = colibri.load_table(file_path)
+    print("... done!")
+    print()

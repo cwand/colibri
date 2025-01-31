@@ -6,13 +6,13 @@ import lmfit
 import matplotlib.pyplot as plt
 
 
-def _fit_lmfit(time_data: list[float],
-               tissue_data: list[float],
-               input_data: list[float],
-               model: Callable[..., list[float]],
-               params: dict[str, dict[str, float]],
-               labels: dict[str, str],
-               tcut: int) -> None:
+def _fit_leastsq(time_data: list[float],
+                 tissue_data: list[float],
+                 input_data: list[float],
+                 model: Callable[..., list[float]],
+                 params: dict[str, dict[str, float]],
+                 labels: dict[str, str],
+                 tcut: int) -> None:
     # Fit a TAC to a given function using lmfit
 
     # Create lmfit Parameters-object
@@ -62,6 +62,37 @@ def _fit_lmfit(time_data: list[float],
     print()
 
 
+def _fit_emcee(time_data: list[float],
+               tissue_data: list[float],
+               input_data: list[float],
+               model: Callable[..., list[float]],
+               params: dict[str, dict[str, float]],
+               labels: dict[str, str],
+               tcut: int) -> None:
+
+    # Analyse posterior distribution of optimal fit parameters using emcee
+
+    # Create lmfit Parameters-object
+    parameters = lmfit.create_params(**params)
+
+    # Set monte carlo parameters
+    emcee_kws = dict(steps=30, burn=5, thin=1, is_weighted=False,
+                     progress=True, workers=1)
+
+    # Define model to fit
+    fit_model = lmfit.Model(model, independent_vars=['t', 'in_func'])
+    # Run fit from initial values
+    res = fit_model.fit(tissue_data[0:tcut],
+                        t=time_data[0:tcut],
+                        in_func=input_data[0:tcut],
+                        params=parameters,
+                        method='emcee',
+                        fit_kws=emcee_kws)
+
+    # Report!
+    lmfit.report_fit(res)
+
+
 def task_tac_fit(task: OrderedDict[str, Any],
                  named_obj: dict[str, Any]):
     """Run the TACFit task. Fits model parameters to a measured TAC. The fit
@@ -74,6 +105,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
     <time_label>LABEL_OF_TIME_DATA</time_label>
     <inp_label>LABEL_OF_INPUT_FUNCTION_DATA</inp_label>
     <tis_label>LABEL_OF_TISSUE_DATA</tis_label>
+    <method>FIT_METHOD</method> <!-- OPTIONS: leastsq, emcee -->
     <model>FIT_MODEL</model>
     <param>
         <name>PARAM1_NAME</name>
@@ -93,7 +125,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
     # Check required tags are present
     task_common._check_tags("TACFit", task,
                             ['tac_name', 'time_label', 'inp_label',
-                             'tis_label', 'model'])
+                             'tis_label', 'method', 'model'])
 
     # Get the data path
     tac_name = str(task['tac_name'])
@@ -102,6 +134,9 @@ def task_tac_fit(task: OrderedDict[str, Any],
     inp_label = str(task['inp_label'])
     time_label = str(task['time_label'])
     tis_label = str(task['tis_label'])
+
+    # Get the fit method
+    method = str(task['method'])
 
     # Get required fit model:
     fit_model = str(task['model'])
@@ -142,13 +177,30 @@ def task_tac_fit(task: OrderedDict[str, Any],
         # Get parameter name and store in dict
         params[param['name']] = param_dict
 
-    # Fit using lmfit
-    _fit_lmfit(
-        time_data=tac[time_label],
-        tissue_data=tac[tis_label],
-        input_data=tac[inp_label],
-        model=models[fit_model],  # type: ignore
-        params=params,
-        labels={'input': inp_label, 'tissue': tis_label},
-        tcut=t_cut
-    )
+    # Run the fit based on the method:
+    if method == 'leastsq':
+        # Fit using lmfit
+        _fit_leastsq(
+            time_data=tac[time_label],
+            tissue_data=tac[tis_label],
+            input_data=tac[inp_label],
+            model=models[fit_model],  # type: ignore
+            params=params,
+            labels={'input': inp_label, 'tissue': tis_label},
+            tcut=t_cut
+        )
+    elif method == 'emcee':
+        _fit_emcee(
+            time_data=tac[time_label],
+            tissue_data=tac[tis_label],
+            input_data=tac[inp_label],
+            model=models[fit_model],  # type: ignore
+            params=params,
+            labels={'input': inp_label, 'tissue': tis_label},
+            tcut=t_cut
+        )
+    else:
+        print("Unknown fit method:", method,
+              ". Possible options are leastsq and emcee.")
+        print("Stopping fit-task.")
+        print()
