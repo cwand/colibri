@@ -21,6 +21,21 @@ class TestModelStep(unittest.TestCase):
         self.assertAlmostEqual(70.4035, m[3], places=3)
         self.assertAlmostEqual(61.5472, m[4], places=3)
 
+    def test_model_step_case0_kws_dict(self):
+        kw = {'amp': 0.7, 'extent': 10.0}
+
+        tp = [0.0, 4.3, 7.5, 12.4, 16.2]
+        in_func = [0.0, 10.3, 12.1, 8.1, 4.1]
+
+        m = colibri.model.model_step(t=tp, in_func=in_func, **kw)
+
+        self.assertEqual(5, len(m))
+        self.assertAlmostEqual(0.0, m[0], places=3)
+        self.assertAlmostEqual(15.5015, m[1], places=3)
+        self.assertAlmostEqual(40.5895, m[2], places=3)
+        self.assertAlmostEqual(70.4035, m[3], places=3)
+        self.assertAlmostEqual(61.5472, m[4], places=3)
+
     def test_model_step_case1(self):
         amp = 0.1
         extent = 3.0

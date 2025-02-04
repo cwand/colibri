@@ -45,10 +45,7 @@ def _model_step_2_integrand(tau: float, t: float,
 
 def model_step_2(t: list[float],
                  in_func: list[float],
-                 amp1: float,
-                 extent1: float,
-                 amp2: float,
-                 extent2: float) -> list[float]:
+                 **kwargs: float) -> list[float]:
     """Solves the model where the input response function is assumed to be a
     2-step function.
     This function calculates the convolution of a sampled input function with
@@ -78,7 +75,8 @@ def model_step_2(t: list[float],
         # running into problems, since the functions are not necessarily very
         # well-behaved.
         y = scipy.integrate.quad(_model_step_2_integrand, 0, ti,
-                                 args=(ti, amp1, extent1, amp2, extent2,
+                                 args=(ti, kwargs['amp1'], kwargs['extent1'],
+                                       kwargs['amp2'], kwargs['extent2'],
                                        t, in_func),
                                  limit=100,
                                  epsabs=1e-2, epsrel=1e-4)
