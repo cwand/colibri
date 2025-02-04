@@ -4,6 +4,7 @@ import colibri
 from colibri.tasks import task_common
 import lmfit
 import matplotlib.pyplot as plt
+import numpy as np
 
 import emcee
 import corner
@@ -12,7 +13,8 @@ import corner
 def _fit_leastsq(time_data: list[float],
                  tissue_data: list[float],
                  input_data: list[float],
-                 model: Callable[..., list[float]],
+                 model: Callable[[list[float], list[float], dict[str, float]],
+                                 list[float]],
                  params: dict[str, dict[str, float]],
                  labels: dict[str, str],
                  tcut: int) -> None:
@@ -65,46 +67,60 @@ def _fit_leastsq(time_data: list[float],
     print()
 
 
+def _log_prob(param_values: list[float],
+              param_names: list[str],
+              model: Callable[[list[float], list[float], dict[str, float]],
+                              list[float]],
+              time_data: list[float],
+              input_data: list[float],
+              tissue_data: list[float],
+              param_bounds: dict[str, (float, float)]) -> float:
+    params = {}
+    for value, name in zip(param_values, param_names):
+        params[name] = value
+    ymodel = np.array(model(time_data, input_data, **params))
+    s2 = np.exp(2.0 * params['__lnsigma'])
+    for param in params:
+        if not param_bounds[param][0] < params[param] < param_bounds[param][1]:
+            return -np.inf
+    return -0.5 * np.sum((np.array(tissue_data) - ymodel) ** 2 / s2 +
+                         np.log(2.0 * np.pi * s2))
+
+
 def _fit_emcee(time_data: list[float],
                tissue_data: list[float],
                input_data: list[float],
-               model: Callable[..., list[float]],
+               model: Callable[[list[float], list[float], dict[str, float]],
+                                 list[float]],
                params: dict[str, dict[str, float]],
                labels: dict[str, str],
                tcut: int) -> None:
 
-    # Analyse posterior distribution of optimal fit parameters using emcee
+    param_start = []
+    param_names = []
+    param_bounds = {}
+    for param in params:
+        param_names.append(param)
+        param_start.append(params[param]['value'])
+        param_bounds[param] = (params[param]['min'], params[param]['max'])
+    param_start.append(0.0)
+    param_names.append("__lnsigma")
+    param_bounds['__lnsigma'] = (-10, 10)
 
-    # Create lmfit Parameters-object
-    parameters = lmfit.create_params(**params)
+    time_data_cut = time_data[0:tcut]
+    input_data_cut = input_data[0:tcut]
+    tissue_data_cut = tissue_data[0:tcut]
 
-    # Set monte carlo parameters
-    emcee_kws = dict(steps=30, burn=5, thin=1, is_weighted=False,
-                     progress=True, nwalkers=50, workers=1)
+    n_walkers = 50
+    n_dim = len(param_start)
 
-    # Define model to fit
-    fit_model = lmfit.Model(model, independent_vars=['t', 'in_func'])
-    # Run fit from initial values
-    res = fit_model.fit(tissue_data[0:tcut],
-                        t=time_data[0:tcut],
-                        in_func=input_data[0:tcut],
-                        params=parameters,
-                        method='emcee',
-                        fit_kws=emcee_kws)
+    start_p = np.array(param_start) + 1e-4 * np.random.randn(n_walkers, n_dim)
+    sampler = emcee.EnsembleSampler(n_walkers, n_dim, _log_prob,
+                                    args=(param_names, model, time_data_cut,
+                                          input_data_cut, tissue_data_cut,
+                                          param_bounds))
+    sampler.run_mcmc(start_p, 10, progress=True)
 
-    # Report!
-    lmfit.report_fit(res)
-
-    plt.plot(res.acceptance_fraction, 'o')
-    plt.xlabel('walker')
-    plt.ylabel('acceptance fraction')
-    plt.savefig("acceptance.png")
-    plt.clf()
-
-    corner.corner(res.flatchain, labels=res.var_names,
-                  truths=list(res.params.valuesdict().values()))
-    plt.savefig("corner.png")
-    plt.clf()
 
 
 def task_tac_fit(task: OrderedDict[str, Any],
@@ -198,7 +214,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
             time_data=tac[time_label],
             tissue_data=tac[tis_label],
             input_data=tac[inp_label],
-            model=models[fit_model],  # type: ignore
+            model=models[fit_model],
             params=params,
             labels={'input': inp_label, 'tissue': tis_label},
             tcut=t_cut
@@ -208,7 +224,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
             time_data=tac[time_label],
             tissue_data=tac[tis_label],
             input_data=tac[inp_label],
-            model=models[fit_model],  # type: ignore
+            model=models[fit_model],
             params=params,
             labels={'input': inp_label, 'tissue': tis_label},
             tcut=t_cut

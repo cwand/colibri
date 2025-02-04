@@ -22,7 +22,7 @@ class TestModelStep(unittest.TestCase):
         self.assertAlmostEqual(61.5472, m[4], places=3)
 
     def test_model_step_case0_kws_dict(self):
-        kw = {'amp': 0.7, 'extent': 10.0}
+        kw = {'amp': 0.7, 'extent': 10.0, 'lnsigma': 0.1}
 
         tp = [0.0, 4.3, 7.5, 12.4, 16.2]
         in_func = [0.0, 10.3, 12.1, 8.1, 4.1]
