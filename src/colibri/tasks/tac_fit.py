@@ -8,6 +8,7 @@ import numpy as np
 
 import emcee
 import corner
+from multiprocessing import Pool
 
 
 def _fit_leastsq(time_data: list[float],
@@ -113,13 +114,48 @@ def _fit_emcee(time_data: list[float],
 
     n_walkers = 50
     n_dim = len(param_start)
+    steps = 30
 
-    start_p = np.array(param_start) + 1e-4 * np.random.randn(n_walkers, n_dim)
-    sampler = emcee.EnsembleSampler(n_walkers, n_dim, _log_prob,
-                                    args=(param_names, model, time_data_cut,
-                                          input_data_cut, tissue_data_cut,
-                                          param_bounds))
-    sampler.run_mcmc(start_p, 10, progress=True)
+    start_p = np.array(param_start) + 1e-5 * np.random.randn(n_walkers, n_dim)
+    with Pool() as pool:
+        sampler = emcee.EnsembleSampler(n_walkers, n_dim, _log_prob,
+                                        args=(param_names, model, time_data_cut,
+                                              input_data_cut, tissue_data_cut,
+                                              param_bounds),
+                                        pool=pool)
+        sampler.run_mcmc(start_p, steps, progress=True)
+
+    fig, axes = plt.subplots(n_dim, figsize=(10, 7), sharex=True)
+    samples = sampler.get_chain()
+    for i in range(n_dim):
+        ax = axes[i]
+        ax.plot(samples[:, :, i], "k", alpha=0.3)
+        ax.set_xlim(0, len(samples))
+        ax.set_ylabel(param_names[i])
+        ax.yaxis.set_label_coords(-0.1, 0.5)
+
+    axes[-1].set_xlabel("step number")
+    plt.show()
+
+    try:
+        tau = sampler.get_autocorr_time()
+        print("Autocorrelation times:")
+        for i in len(param_names):
+            print(f'   {param_names[i]}: {tau[i]:.1f}')
+    except:
+        print("Autocorrelation could not be estimated")
+    print()
+
+    flat_samples = sampler.get_chain(discard=0, thin=1, flat=True)
+    corner.corner(flat_samples, labels=param_names, truths=param_start)
+    plt.show()
+
+    print("Parameter quantiles (5%, 16%, 50%, 84%, 95%)")
+    for i in range(n_dim):
+        mcmc = np.percentile(flat_samples[:, i], [5, 16, 50, 84, 95])
+        print(param_names[i], ":", mcmc)
+    print()
+
 
 
 
