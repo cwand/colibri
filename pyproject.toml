@@ -37,6 +37,7 @@ dependencies = [
 	'lmfit',
 	'xmltodict',
 	'emcee>3.0.0',
+	'corner',
 	'tqdm',
 	'pandas'
 ]

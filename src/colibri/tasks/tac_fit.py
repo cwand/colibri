@@ -5,6 +5,9 @@ from colibri.tasks import task_common
 import lmfit
 import matplotlib.pyplot as plt
 
+import emcee
+import corner
+
 
 def _fit_leastsq(time_data: list[float],
                  tissue_data: list[float],
@@ -77,7 +80,7 @@ def _fit_emcee(time_data: list[float],
 
     # Set monte carlo parameters
     emcee_kws = dict(steps=30, burn=5, thin=1, is_weighted=False,
-                     progress=True, workers=1)
+                     progress=True, nwalkers=50, workers=1)
 
     # Define model to fit
     fit_model = lmfit.Model(model, independent_vars=['t', 'in_func'])
@@ -91,6 +94,17 @@ def _fit_emcee(time_data: list[float],
 
     # Report!
     lmfit.report_fit(res)
+
+    plt.plot(res.acceptance_fraction, 'o')
+    plt.xlabel('walker')
+    plt.ylabel('acceptance fraction')
+    plt.savefig("acceptance.png")
+    plt.clf()
+
+    corner.corner(res.flatchain, labels=res.var_names,
+                  truths=list(res.params.valuesdict().values()))
+    plt.savefig("corner.png")
+    plt.clf()
 
 
 def task_tac_fit(task: OrderedDict[str, Any],
