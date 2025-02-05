@@ -1,10 +1,11 @@
-from typing import OrderedDict, Callable, Any
+from typing import OrderedDict, Callable, Any, Optional
 
 import colibri
 from colibri.tasks import task_common
 import lmfit
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 import emcee
 import corner
@@ -18,7 +19,8 @@ def _fit_leastsq(time_data: list[float],
                                  list[float]],
                  params: dict[str, dict[str, float]],
                  labels: dict[str, str],
-                 tcut: int) -> None:
+                 tcut: int,
+                 output: Optional[str]) -> None:
     # Fit a TAC to a given function using lmfit
 
     # Create lmfit Parameters-object
@@ -63,7 +65,13 @@ def _fit_leastsq(time_data: list[float],
 
     plt.legend()
     plt.grid(visible=True)
-    plt.show()
+    if output is None:
+        plt.show()
+    else:
+        fit_png_path = os.path.join(output, "fit.png")
+        print("Saving image to file", fit_png_path, ".")
+        plt.savefig(fit_png_path)
+        plt.clf()
     print("... done!")
     print()
 
@@ -95,7 +103,8 @@ def _fit_emcee(time_data: list[float],
                                  list[float]],
                params: dict[str, dict[str, float]],
                labels: dict[str, str],
-               tcut: int) -> None:
+               tcut: int,
+               output: Optional[str]) -> None:
 
     param_start = []
     param_names = []
@@ -120,7 +129,7 @@ def _fit_emcee(time_data: list[float],
                                               input_data_cut, tissue_data_cut,
                                               param_bounds),
                                         pool=pool)
-        sampler.run_mcmc(start_p, steps, progress=True)
+        sampler.run_mcmc(start_p, steps, progress=False)
 
     fig, axes = plt.subplots(n_dim, figsize=(10, 7), sharex=True)
     samples = sampler.get_chain()
@@ -132,7 +141,13 @@ def _fit_emcee(time_data: list[float],
         ax.yaxis.set_label_coords(-0.1, 0.5)
 
     axes[-1].set_xlabel("step number")
-    plt.show()
+    if output is None:
+        plt.show()
+    else:
+        samples_png_path = os.path.join(output, "samples.png")
+        print("Saving samples image to file", samples_png_path, ".")
+        plt.savefig(samples_png_path)
+        plt.clf()
 
     try:
         tau = sampler.get_autocorr_time()
@@ -145,7 +160,13 @@ def _fit_emcee(time_data: list[float],
 
     flat_samples = sampler.get_chain(discard=0, thin=1, flat=True)
     corner.corner(flat_samples, labels=param_names, truths=param_start)
-    plt.show()
+    if output is None:
+        plt.show()
+    else:
+        corner_png_path = os.path.join(output, "corner.png")
+        print("Saving corner image to file", corner_png_path, ".")
+        plt.savefig(corner_png_path)
+        plt.clf()
 
     print("Parameter quantiles (5%, 16%, 50%, 84%, 95%)")
     for i in range(n_dim):
@@ -215,6 +236,11 @@ def task_tac_fit(task: OrderedDict[str, Any],
     if 'tcut' in task:
         t_cut = int(task['tcut'])
 
+    # Get output directory if required
+    output = None
+    if 'output' in task:
+        output = task['output']
+
     print("Fitting TAC data to model", fit_model, ".")
 
     # Dict of possible models
@@ -250,7 +276,8 @@ def task_tac_fit(task: OrderedDict[str, Any],
             model=models[fit_model],
             params=params,
             labels={'input': inp_label, 'tissue': tis_label},
-            tcut=t_cut
+            tcut=t_cut,
+            output=output
         )
     elif method == 'emcee':
         _fit_emcee(
@@ -260,7 +287,8 @@ def task_tac_fit(task: OrderedDict[str, Any],
             model=models[fit_model],
             params=params,
             labels={'input': inp_label, 'tissue': tis_label},
-            tcut=t_cut
+            tcut=t_cut,
+            output=output
         )
     else:
         print("Unknown fit method:", method,
