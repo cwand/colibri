@@ -117,7 +117,7 @@ def _fit_emcee(time_data: list[float],
     steps = 30
 
     start_p = np.array(param_start) + 1e-5 * np.random.randn(n_walkers, n_dim)
-    with Pool() as pool:
+    with Pool(8) as pool:
         sampler = emcee.EnsembleSampler(n_walkers, n_dim, _log_prob,
                                         args=(param_names, model, time_data_cut,
                                               input_data_cut, tissue_data_cut,
