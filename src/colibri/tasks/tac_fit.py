@@ -120,7 +120,7 @@ def _fit_emcee(time_data: list[float],
 
     n_walkers = 50
     n_dim = len(param_start)
-    steps = 30
+    steps = 5000
 
     start_p = np.array(param_start) + 1e-5 * np.random.randn(n_walkers, n_dim)
     with Pool(8) as pool:
