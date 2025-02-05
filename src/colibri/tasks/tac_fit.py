@@ -104,9 +104,6 @@ def _fit_emcee(time_data: list[float],
         param_names.append(param)
         param_start.append(params[param]['value'])
         param_bounds[param] = (params[param]['min'], params[param]['max'])
-    param_start.append(0.0)
-    param_names.append("__lnsigma")
-    param_bounds['__lnsigma'] = (-10, 10)
 
     time_data_cut = time_data[0:tcut]
     input_data_cut = input_data[0:tcut]
