@@ -115,6 +115,7 @@ def _log_prob(param_values: list[float],
 def _fit_emcee(time_data: list[float],
                tissue_data: list[float],
                input_data: list[float],
+               labels: dict[str, str],
                model: Callable[[list[float], list[float], dict[str, float]],
                                  list[float]],
                params: dict[str, dict[str, float]],
@@ -215,11 +216,56 @@ def _fit_emcee(time_data: list[float],
         plt.savefig(corner_png_path)
         plt.clf()
 
-    # Print parameter quantiles
+    # Print parameter quantiles and save 50% quantile as well as original
+    # values for plotting
     print("Parameter quantiles (5%, 16%, 50%, 84%, 95%)")
+    ml50 = {}
+    original_values = {}
     for i in range(n_dim):
         mcmc = np.percentile(flat_samples[:, i], [5, 16, 50, 84, 95])
         print(param_names[i], ":", mcmc)
+        ml50[param_names[i]] = mcmc[2]
+        original_values[param_names[i]] = param_start[i]
+    print()
+
+    print("Plotting...")
+    fig, ax = plt.subplots()
+    ml50_fit = model(time_data[0:tcut],
+                     input_data[0:tcut],
+                     **ml50)
+    original_fit = model(time_data[0:tcut],
+                         input_data[0:tcut],
+                         **original_values)
+
+    ax.plot(time_data, tissue_data, 'gx', label=labels['tissue'])
+    ax.plot(time_data, input_data, 'rx--', label=labels['input'])
+    ax.plot(time_data[0:tcut], ml50_fit, 'k-', label="ML50 Fit")
+    ax.plot(time_data[0:tcut], original_fit, 'k-', label="Original Fit")
+    # Pick 100 random samples and plot the projection to illustrate
+    # parameter variation
+    inds = np.random.randint(len(flat_samples), size=100)
+    for ind in inds:
+        sample = flat_samples[ind]
+        smpl_params = {}
+        for i in range(len(param_names)):
+            smpl_params[param_names[i]] = sample[i]
+        smpl_model = model(time_data[0:tcut],
+                           input_data[0:tcut],
+                           **smpl_params)
+        ax.plot(time_data[0:tcut], smpl_model, "C1", alpha=0.1)
+    ax.set_xlabel('Time [sec]')
+    ax.set_ylabel('Mean ROI-activity concentration [Bq/mL]')
+
+    plt.legend()
+    plt.grid(visible=True)
+    if output is None:
+        plt.show()
+    else:
+        fit_png_path = os.path.join(output, "fit.png")
+        print("Saving image to file", fit_png_path, ".")
+        plt.savefig(fit_png_path)
+        plt.clf()
+    print("... done!")
     print()
 
 
@@ -339,6 +385,7 @@ def task_tac_fit(task: OrderedDict[str, Any],
             time_data=tac[time_label],
             tissue_data=tac[tis_label],
             input_data=tac[inp_label],
+            labels={'input': inp_label, 'tissue': tis_label},
             model=models[fit_model],
             params=params,
             tcut=t_cut,

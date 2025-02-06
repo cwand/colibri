@@ -33,7 +33,7 @@ def _print_task_options(task: OrderedDict[str, Any],
                 print()
         else:
             dots_needed = 68 - len(indent_string) - len(tag) - len(str(task[tag]))
-            print(f'{indent_string}{tag}: {'.' * dots_needed} {task[tag]}')
+            print(f'{indent_string}{tag}: {"." * dots_needed} {task[tag]}')
 
 def _print_task(task_name: str,
                 task: OrderedDict[str, Any]):
