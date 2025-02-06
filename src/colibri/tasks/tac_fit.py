@@ -118,8 +118,11 @@ def _fit_emcee(time_data: list[float],
                model: Callable[[list[float], list[float], dict[str, float]],
                                  list[float]],
                params: dict[str, dict[str, float]],
-               labels: dict[str, str],
                tcut: int,
+               nsteps: int,
+               nworkers: int,
+               burn: int,
+               thin: int,
                output: Optional[str]) -> None:
     # Sample the posterior parameter distribution space using Monte Carlo
     # simulations with the emcee-package
@@ -139,22 +142,21 @@ def _fit_emcee(time_data: list[float],
     tissue_data_cut = tissue_data[0:tcut]
 
     # Set emcee parameters
-    n_walkers = 50  # Number of walkers used to search the space
+    n_walkers = 400  # Number of walkers used to search the space
     n_dim = len(param_start)  # Dimensionality of the parameter space
-    steps = 5000  # Number of update steps
 
     # Start the walkers in a gaussian ball around the optimised parameters
     start_p = np.array(param_start) + 1e-5 * np.random.randn(n_walkers, n_dim)
 
     # Run as a multithreaded pool
-    with Pool(8) as pool:
+    with Pool(nworkers) as pool:
         # Start MC
         sampler = emcee.EnsembleSampler(n_walkers, n_dim, _log_prob,
                                         args=(param_names, model, time_data_cut,
                                               input_data_cut, tissue_data_cut,
                                               param_bounds),
                                         pool=pool)
-        sampler.run_mcmc(start_p, steps, progress=False)
+        sampler.run_mcmc(start_p, nsteps, progress=False)
     print("... done!")
     print()
 
@@ -164,6 +166,7 @@ def _fit_emcee(time_data: list[float],
     for i in range(n_dim):
         ax = axes[i]
         ax.plot(samples[:, :, i], "k", alpha=0.3)
+        ax.axvline(x=burn, linestyle="--", color="xkcd:azure")
         ax.set_xlim(0, len(samples))
         ax.set_ylabel(param_names[i])
         ax.yaxis.set_label_coords(-0.1, 0.5)
@@ -177,19 +180,32 @@ def _fit_emcee(time_data: list[float],
         plt.savefig(samples_png_path)
         plt.clf()
 
+    # Plot acceptance fraction of each walker:
+    plt.plot(sampler.acceptance_fraction, 'o')
+    plt.xlabel('walker')
+    plt.ylabel('acceptance fraction')
+    if output is None:
+        plt.show()
+    else:
+        samples_png_path = os.path.join(output, "acceptance.png")
+        print("Saving samples image to file", samples_png_path, ".")
+        plt.savefig(samples_png_path)
+        plt.clf()
+
+
     # Try to calculate autocorrelation times
     # (might fail if "steps" is too small)
     try:
-        tau = sampler.get_autocorr_time()
+        tau = sampler.get_autocorr_time(discard=burn, thin=thin)
         print("Autocorrelation times:")
-        for i in len(param_names):
+        for i in range(len(param_names)):
             print(f'   {param_names[i]}: {tau[i]:.1f}')
     except:
         print("Autocorrelation could not be estimated")
     print()
 
     # Make corner plot
-    flat_samples = sampler.get_chain(discard=0, thin=1, flat=True)
+    flat_samples = sampler.get_chain(discard=burn, thin=thin, flat=True)
     corner.corner(flat_samples, labels=param_names, truths=param_start)
     if output is None:
         plt.show()
@@ -222,6 +238,10 @@ def task_tac_fit(task: OrderedDict[str, Any],
     <inp_label>LABEL_OF_INPUT_FUNCTION_DATA</inp_label>
     <tis_label>LABEL_OF_TISSUE_DATA</tis_label>
     <method>FIT_METHOD</method> <!-- OPTIONS: leastsq, emcee -->
+    <nsteps>EMCEE_STEPS</nsteps> <!-- REQUIRED IF USING EMCEE -->
+    <nworkers>EMCEE_WORKERS</nworkers> <!-- REQUIRED IF USING EMCEE -->
+    <burn>EMCEE_BURN</burn> <!-- REQUIRED IF USING EMCEE -->
+    <thin>EMCEE_THIN</thin> <!-- REQUIRED IF USING EMCEE -->
     <model>FIT_MODEL</model>
     <param>
         <name>PARAM1_NAME</name>
@@ -321,8 +341,11 @@ def task_tac_fit(task: OrderedDict[str, Any],
             input_data=tac[inp_label],
             model=models[fit_model],
             params=params,
-            labels={'input': inp_label, 'tissue': tis_label},
             tcut=t_cut,
+            nsteps=int(task['nsteps']),
+            nworkers=int(task['nworkers']),
+            burn=int(task['burn']),
+            thin=int(task['thin']),
             output=output
         )
     else:
