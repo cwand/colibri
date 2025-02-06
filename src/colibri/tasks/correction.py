@@ -1,6 +1,7 @@
 from typing import OrderedDict, Any
 import numpy as np
 from colibri.tasks import task_common
+import time
 
 
 def task_apply_correction(task: OrderedDict[str, Any],
@@ -18,7 +19,8 @@ def task_apply_correction(task: OrderedDict[str, Any],
     <factor>SCALAR_TO_USE_AS_FACTOR</factor>
     """
 
-    print("Applying correction.")
+    task_common._print_task("Correction", task)
+    task_start_time = time.time_ns()
 
     # Check tags
     task_common._check_tags("Correction", task, ['type'])
@@ -27,6 +29,13 @@ def task_apply_correction(task: OrderedDict[str, Any],
     cor_type = str(task['type'])
     if cor_type == "Scale":
         _scale_tac(task, named_obj)
+
+    task_run_time = (time.time_ns() - task_start_time) * 1e-9
+    print(f'Task run time: {task_run_time:.2f} seconds')
+
+    print("------------------------------------------------------------------")
+    print()
+    print()
 
 
 def _scale_tac(task: OrderedDict[str, Any],

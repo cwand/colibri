@@ -6,6 +6,7 @@ import lmfit
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import time
 
 import emcee
 import corner
@@ -235,7 +236,8 @@ def task_tac_fit(task: OrderedDict[str, Any],
     ...
     """
 
-    print("Starting TAC-fitting.")
+    task_common._print_task("TACFit", task)
+    task_start_time = time.time_ns()
 
     # Check required tags are present
     task_common._check_tags("TACFit", task,
@@ -273,6 +275,8 @@ def task_tac_fit(task: OrderedDict[str, Any],
         output = task['output']
 
     print("Fitting TAC data to model", fit_model, ".")
+    print("Using method", method, ".")
+    print()
 
     # Dict of possible models
     models = {
@@ -326,3 +330,10 @@ def task_tac_fit(task: OrderedDict[str, Any],
               ". Possible options are leastsq and emcee.")
         print("Stopping fit-task.")
         print()
+
+    task_run_time = (time.time_ns() - task_start_time) * 1e-9
+    print(f'Task run time: {task_run_time:.2f} seconds')
+
+    print("------------------------------------------------------------------")
+    print()
+    print()

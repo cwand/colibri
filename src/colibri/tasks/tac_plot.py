@@ -1,6 +1,7 @@
 from typing import OrderedDict, Any
 from colibri.tasks import task_common
 import matplotlib.pyplot as plt
+import time
 
 
 def task_tac_plot(task: OrderedDict[str, Any],
@@ -43,7 +44,8 @@ def task_tac_plot(task: OrderedDict[str, Any],
     <ylabel>ROI Mean activity conc. [Bq/mL]</ylabel>
     """
 
-    print("Starting TAC-plotting...")
+    task_common._print_task("TACPlot", task)
+    task_start_time = time.time_ns()
 
     # Check required tags are present
     task_common._check_tags("TACPlot", task,
@@ -72,4 +74,11 @@ def task_tac_plot(task: OrderedDict[str, Any],
     plt.show()
 
     print("...done")
+    print()
+
+    task_run_time = (time.time_ns() - task_start_time) * 1e-9
+    print(f'Task run time: {task_run_time:.2f} seconds')
+
+    print("------------------------------------------------------------------")
+    print()
     print()

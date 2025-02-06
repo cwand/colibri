@@ -1,6 +1,7 @@
 from typing import OrderedDict, Any, Optional
 import colibri
 from colibri.tasks import task_common
+import time
 
 
 def task_roi_means(task: OrderedDict[str, Any],
@@ -33,7 +34,8 @@ def task_roi_means(task: OrderedDict[str, Any],
     only relative acquisition times are output.
     """
 
-    print("Starting image read and ROI-mean calculation.")
+    task_common._print_task("ROIMeans", task)
+    task_start_time = time.time_ns()
 
     # Check required tags
     task_common._check_tags("ROIMeans", task,
@@ -90,4 +92,11 @@ def task_roi_means(task: OrderedDict[str, Any],
     # Put result in named_obj
     named_obj[res_name] = dyn
     print("... done!")
+    print()
+
+    task_run_time = (time.time_ns() - task_start_time) * 1e-9
+    print(f'Task run time: {task_run_time:.2f} seconds')
+
+    print("------------------------------------------------------------------")
+    print()
     print()

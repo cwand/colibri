@@ -3,6 +3,7 @@ import colibri
 import xmltodict
 from typing import Any
 import importlib.metadata
+import time
 
 
 def main(argv: list[str]):
@@ -10,6 +11,7 @@ def main(argv: list[str]):
     # Get version number from pyproject.toml
     __version__ = importlib.metadata.version("colibri")
 
+    colibri_start_time = time.time_ns()
     print("Starting COLIBRI", __version__)
     print()
 
@@ -35,6 +37,11 @@ def main(argv: list[str]):
 
     for task in root['task']:
         tasks[task['@name']](task, named_obj)
+
+    run_time = (time.time_ns() - colibri_start_time) * 1e-9
+    print("All tasks completed.")
+    print(f'Total run time: {run_time:.1f} seconds.')
+    print()
 
     print("COLIBRI ended!")
 

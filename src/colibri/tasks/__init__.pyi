@@ -4,6 +4,9 @@ def _check_tags(task_name: str,
                 task: OrderedDict[str, Any],
                 required_tags: list[str]): ...
 
+def _print_task(task_name: str,
+                task: OrderedDict[str, Any]): ...
+
 def task_save_table(task: OrderedDict[str, Any],
                     named_obj: dict[str, Any]): ...
 
