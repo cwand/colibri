@@ -37,6 +37,12 @@ Missing command line argument: path to an XML file. Exiting!
 ```
 
 ## Using colibri
+This section describes how to use colibri in detail.
+- [XML-input file overview](#xml-input-file-overview)
+  - [SaveTable](#savetable)
+- [Named Object Container](#named-object-container)
+
+### XML-input file overview
 To run colibri, the main program has to be supplied to the path of an XML-file. This file contains the tasks that colibri should perform and any information required.
 The XML-file should have the following structure:
 ```
@@ -51,26 +57,28 @@ The XML-file should have the following structure:
   </task>
 </colibri>
 ```
-Example xml-files for specific tasks can be found in the ```test/xml_input``` folder.
-To pass data from one task to the other, a "Named Object" container is available. For example, to compute ROI-means and then apply a correction to one of the means:
+Example xml-files for specific tasks can be found in the ```test/xml_input``` folder, which can be used as templates.
+The following sections describe each task and the XML-structure that should be used.
+
+#### SaveTable
+Saves a table (data that has been calculated from another task) from the [Named Object Container](#named-object-container) to a file.
+The XML-structure required is:
 ```
-<colibri>
-  <task name="ROIMeans">
-    <img_path>...</img_path>
-    <roi_path>...</roi_path>
-    <res_name>tac</res_name> <!-- Data will be saved in Named Object container under this name -->
-  </task>
-  <task name="Correction">
-    <table_name>tac</table_name> <!-- Here we tell colibri to use the correct object from the Named Object container -->
-    ...
-  </task>
-</colibri>
+<task name="SaveTable">
+  <name>...</name>    <!-- The table name in the Named Object container -->
+  <file>...</file>    <!-- The file where the table will be saved -->
+</task>
 ```
 
-When the XML-file is done, colibri can be run using
+#### LoadTable
+Loads a table previously saved with the [SaveTable](#savetable) task from a file to the [Named Object Container](#named-object-container).
+The XML-structure required is:
 ```
-> python -m colibri path/to/XML/file.xml
-Starting COLIBRI 1.0.1
+<task name="LoadTable">
+  <file>...</file>    <!-- The file where the table has been saved -->
+  <name>...</name>    <!-- The desired name of the table in the Named Object container -->
+</task>
+```
 
-...
-```
+### Named Object container
+
