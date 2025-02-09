@@ -40,6 +40,8 @@ Missing command line argument: path to an XML file. Exiting!
 This section describes how to use colibri in detail.
 - [XML-input file overview](#xml-input-file-overview)
   - [SaveTable](#savetable)
+  - [LoadTable](#loadtable)
+  - [ROIMeans](#roimeans
 - [Named Object Container](#named-object-container)
 
 ### XML-input file overview
@@ -77,6 +79,20 @@ The XML-structure required is:
 <task name="LoadTable">
   <file>...</file>    <!-- The file where the table has been saved -->
   <name>...</name>    <!-- The desired name of the table in the Named Object container -->
+</task>
+```
+
+#### ROIMeans
+Loads a 
+```
+<task name="ROIMeans">
+  <img_path>...</img_path>    <!-- Path to the directory of the image files -->
+  <roi_path>...</roi_path>    <!-- Path to the file containing the ROIs -->
+  <labels>...</labels>        <!-- Labels for the ROIs (OPTIONAL) -->
+  <ignore>...</ignore>        <!-- Do not compute means for these ROIs (OPTIONAL) -->
+  <resample>...</resample>    <!-- Resample either images or ROI (OPTIONAL) -->
+  <frame_dur>...</frame_dur>  <!-- Also calculate frame duration (OPTIONAL) -->
+  <res_name>...</res_name>    <!-- The result will be stored a a table in the Named Object Container under this name -->
 </task>
 ```
 
